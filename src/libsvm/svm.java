@@ -1937,7 +1937,7 @@ public class svm {
 	{
 		svm_model model = new svm_model();
 		model.param = param;
-
+model.maxIndex=prob.findMaxIndex();
 		if(param.svm_type == svm_parameter.ONE_CLASS ||
 		   param.svm_type == svm_parameter.EPSILON_SVR ||
 		   param.svm_type == svm_parameter.NU_SVR)
@@ -2394,6 +2394,14 @@ public class svm {
 		}
 	}
 
+	public static double svm_predict(svm_model model, double[] xx)
+	{
+	int ii;int xLen=xx.length;svm_node[] xNodes= new svm_node[xLen];
+        for(ii=0;ii<xLen;ii++){xNodes[ii]=new svm_node();
+            xNodes[ii].index=ii+1;xNodes[ii].value=xx[ii];
+        }
+		return svm_predict(model, xNodes);
+	}
 	public static double svm_predict(svm_model model, svm_node[] x)
 	{
 		int nr_class = model.nr_class;
