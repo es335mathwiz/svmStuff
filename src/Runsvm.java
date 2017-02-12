@@ -15,7 +15,7 @@ public class Runsvm {
  {double[] trgt = new double[20];
     System.out.println("Runsvm:");
     trainGuts svmt= new trainGuts();
-    svmt.input_file_name="/msu/home/m1gsa00/git/manchesterCS/61011/libsvm/heart_scale";
+    svmt.input_file_name=System.getProperty("user.home")+"/git/manchesterCS/61011/libsvm/heart_scale";
     svmt.read_problem();
     svm svmDoer = new svm();
     svm_model mod = svmDoer.svm_train(svmt.prob,svmt.param);
@@ -43,7 +43,7 @@ double [] svmrArgsPoly={1,.01};
 svmt.mma_read_problemPoly(xVals, yVals,svmrArgs);
 svmDoer=new svm();
 mod=svmDoer.svm_train(svmt.prob,svmt.param);
-double predRes=svm.svm_predict(mod,xVals[1]);
+predRes=svm.svm_predict(mod,xVals[1]);
 svm.svm_cross_validation(svmt.prob,svmt.param,3,trgt);
  }
     
