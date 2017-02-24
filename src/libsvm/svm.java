@@ -2286,6 +2286,7 @@ model.maxIndex=prob.findMaxIndex();
 		int l = prob.l;
 		int[] perm = new int[l];
 		double[] target=new double[l];
+                rand.setSeed(0);/*using cv in param selection*/
 		// stratified cv may not give leave-one-out rate
 		// Each class to l folds -> some folds may have zero elements
 		if((param.svm_type == svm_parameter.C_SVC ||
