@@ -4,7 +4,7 @@
 
 
 package libsvm;
-
+import forImport.*;
 import java.io.*;
 import java.util.*;
 
@@ -2503,6 +2503,41 @@ model.maxIndex=prob.findMaxIndex();
 
 			return model.label[vote_max_idx];
 		}
+	}
+
+public static double 
+mysvm_predict_Expected_values(svm_model model, double[] x)
+	{
+		int i;double sum = 0;dwell tf = new dwell();
+		if(model.param.svm_type == svm_parameter.EPSILON_SVR ||
+		   model.param.svm_type == svm_parameter.NU_SVR)
+		{			double[] sv_coef = model.sv_coef[0];
+			double [] ExpKern =dwell.testExpKern(x);
+
+			for(i=0;i<model.l;i++)
+				sum += sv_coef[i] * ExpKern[model.sv_indices[i]-1];
+			sum -= model.rho[0];
+
+
+		}
+				return sum;
+	}
+public static double 
+        mysvm_predict_values(svm_model model, double[] x)
+	{
+		int i;double sum = 0;dwell tf = new dwell();
+		if(model.param.svm_type == svm_parameter.EPSILON_SVR ||
+		   model.param.svm_type == svm_parameter.NU_SVR)
+		{			double[] sv_coef = model.sv_coef[0];
+			double [] Kern =dwell.testKern(x);
+
+			for(i=0;i<model.l;i++)
+				sum += sv_coef[i] * Kern[model.sv_indices[i]-1];
+			sum -= model.rho[0];
+
+
+		}
+				return sum;
 	}
 
 	public static double svm_predict(svm_model model, double[] xx)
