@@ -136,6 +136,7 @@ abstract class QMatrix {
 
 abstract class Kernel extends QMatrix {
 	private svm_node[][] x;
+	private double[][] myX;
 	private final double[] x_square;
 
 	// svm_parameter
@@ -179,6 +180,8 @@ abstract class Kernel extends QMatrix {
 				return Math.tanh(gamma*dot(x[i],x[j])+coef0);
 			case svm_parameter.PRECOMPUTED:
 				return x[i][(int)(x[j][0].value)].value;
+			case svm_parameter.MYPRECOMPUTED:
+			    return dwell.myX[i][j];
 			default:
 				return 0;	// java
 		}
@@ -1999,7 +2002,7 @@ model.maxIndex=prob.findMaxIndex();
 			if(nr_class == 1) 
 				svm.info("WARNING: training data in only one class. See README for details.\n");
 			
-			svm_node[][] x = new svm_node[l][];
+			svm_nodegrep svm_node *.java[][] x = new svm_node[l][];
 			int i;
 			for(i=0;i<l;i++)
 				x[i] = prob.x[perm[i]];

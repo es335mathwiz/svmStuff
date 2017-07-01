@@ -101,6 +101,38 @@ param.gamma=CEps[2];
         postProbProc();
     }
 
+
+public void mma_read_problemPRECOMPUTED() throws IOException {
+
+        setDefaults();
+        prob = mmaReadProb(dwell.xVals(),dwell.yVals());
+
+        postProbProc();
+    }
+
+    private void postProbProc() {
+        int max_index = prob.findMaxIndex();
+        if (param.gamma == 0 && max_index > 0) {
+            param.gamma = 1.0 / max_index;
+        }
+
+        if (param.kernel_type == svm_parameter.PRECOMPUTED) {
+            for (int i = 0; i < prob.l; i++) {
+                if (prob.x[i][0].index != 0) {
+                    System.err.print("Wrong kernel matrix: first column must be 0:sample_serial_number\n");
+                    System.exit(1);
+                }
+                if ((int) prob.x[i][0].value <= 0 || (int) prob.x[i][0].value > max_index) {
+                    System.err.print("Wrong input format: sample_serial_number out of range\n");
+                    System.exit(1);
+                }
+            }
+        }
+    }
+
+
+
+
 public void mma_read_problemSigmoid(double[][] xVals, double[] yVals,double [] CEps) throws IOException {
 
         setDefaults();
