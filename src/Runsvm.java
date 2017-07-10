@@ -11,7 +11,7 @@
 import java.io.IOException;
 import libsvm.*;
 public class Runsvm {
- public static void main(String argv[]) throws IOException
+ public static void main(String argv[]) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException
  {double[] trgt = new double[20];
     System.out.println("Runsvm:");
     trainGuts svmt= new trainGuts();
@@ -44,8 +44,8 @@ double [] svmrArgsPoly={1,.01,1.2,0.1,2};
 svmt.mma_read_problemLinear(xVals, yVals,svmrArgs);
 svmDoer=new svm();
 mod=svmDoer.svm_train(svmt.prob,svmt.param);
-predRes=svm.mysvm_predict_values(mod,xVals[1]);
-double predExpRes=svm.mysvm_predict_Expected_values(mod,xVals[1]);
+
+double predExpRes=svm.mysvm_predict_Expected_values(mod,xVals[1],"forImport.dwell");
 svm.svm_cross_validation(svmt.prob,svmt.param,3,trgt);
  }
     

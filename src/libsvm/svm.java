@@ -181,7 +181,7 @@ abstract class Kernel extends QMatrix {
 			case svm_parameter.PRECOMPUTED:
 				return x[i][(int)(x[j][0].value)].value;
 			case svm_parameter.MYPRECOMPUTED:
-			    return dwell.myX[i][j];
+			    return myKernX[i][j];
 			default:
 				return 0;	// java
 		}
@@ -2002,7 +2002,7 @@ model.maxIndex=prob.findMaxIndex();
 			if(nr_class == 1) 
 				svm.info("WARNING: training data in only one class. See README for details.\n");
 			
-			svm_nodegrep svm_node *.java[][] x = new svm_node[l][];
+			svm_node[][] x = new svm_node[l][];
 			int i;
 			for(i=0;i<l;i++)
 				x[i] = prob.x[perm[i]];
@@ -2507,15 +2507,22 @@ model.maxIndex=prob.findMaxIndex();
 			return model.label[vote_max_idx];
 		}
 	}
-
+public abstract class PRECOMPUTED {
+  abstract  double [] testExpKern();
+  abstract  double [] testKern();
+}
 public static double 
-mysvm_predict_Expected_values(svm_model model, double[] x)
+    mysvm_predict_Expected_values(svm_model model, double[] x,
+    String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException
 	{
-		int i;double sum = 0;dwell tf = new dwell();
+PRECOMPUTED classTemp = Class.forName(className);
+PRECOMPUTED kernCompObj =classTemp.newInstance();
+
+		int i;double sum = 0;
 		if(model.param.svm_type == svm_parameter.EPSILON_SVR ||
 		   model.param.svm_type == svm_parameter.NU_SVR)
 		{			double[] sv_coef = model.sv_coef[0];
-			double [] ExpKern =dwell.testExpKern(x);
+			double [] ExpKern =kernCompObj.testExpKern(x);
 
 			for(i=0;i<model.l;i++)
 				sum += sv_coef[i] * ExpKern[model.sv_indices[i]-1];
@@ -2526,13 +2533,17 @@ mysvm_predict_Expected_values(svm_model model, double[] x)
 				return sum;
 	}
 public static double 
-        mysvm_predict_values(svm_model model, double[] x)
+        mysvm_predict_values(svm_model model, double[] x,
+    String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException
 	{
-		int i;double sum = 0;dwell tf = new dwell();
+Class classTemp = Class.forName(className);
+Object kernCompObj =classTemp.newInstance();
+	    
+		int i;double sum = 0;
 		if(model.param.svm_type == svm_parameter.EPSILON_SVR ||
 		   model.param.svm_type == svm_parameter.NU_SVR)
 		{			double[] sv_coef = model.sv_coef[0];
-			double [] Kern =dwell.testKern(x);
+			double [] Kern =kernCompObj.testKern(x);
 
 			for(i=0;i<model.l;i++)
 				sum += sv_coef[i] * Kern[model.sv_indices[i]-1];
