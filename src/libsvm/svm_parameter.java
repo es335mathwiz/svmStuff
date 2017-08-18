@@ -33,7 +33,27 @@ public class svm_parameter implements Cloneable,java.io.Serializable
 	public double p;	// for EPSILON_SVR
 	public int shrinking;	// use the shrinking heuristics
 	public int probability; // do probability estimates
-
+public svm_parameter copy(){
+    svm_parameter theCopy = new svm_parameter();
+    theCopy.svm_type=svm_type;
+    theCopy.kernel_type=kernel_type;
+    theCopy.degree=degree;
+    theCopy.gamma=gamma;
+    theCopy.coef0=coef0;
+    theCopy.cache_size=cache_size;
+    theCopy.eps=eps;
+    theCopy.C=C;
+    theCopy.nr_weight=nr_weight;
+    theCopy.weight_label=new int[weight_label.length];
+    System.arraycopy(weight_label,0,theCopy.weight_label,0,weight_label.length);
+    theCopy.weight=new double[weight.length];
+    System.arraycopy(weight,0,theCopy.weight,0,weight.length);
+    theCopy.nu=nu;
+    theCopy.p=p;
+    theCopy.shrinking=shrinking;
+    theCopy.probability=probability;
+    return(theCopy);
+}
 	public Object clone() 
 	{
 		try 

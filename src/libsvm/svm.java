@@ -7,6 +7,18 @@ package libsvm;
 import forImport.*;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.Callable;
+import com.wolfram.jlink.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static libsvm.svm.svm_train;
 
 //
 // Kernel Cache
@@ -14,6 +26,7 @@ import java.util.*;
 // l is the number of total data items
 // size is the cache size limit in bytes
 //
+ 
 class Cache {
 	private final int l;
 	private long size;
@@ -1936,7 +1949,9 @@ public class svm {
 	//
 	// Interface functions
 	//
-	public static svm_model svm_train(svm_problem prob, svm_parameter param)
+ 
+      
+        public static svm_model svm_train(svm_problem prob, svm_parameter param)
 	{
 		svm_model model = new svm_model();
 		model.param = param;
@@ -2122,7 +2137,7 @@ model.maxIndex=prob.findMaxIndex();
 				nz_count[i] = nSV;
 			}
 
-			svm.info("Total nSV = "+nnz+"\n");
+//			svm.info("Total nSV = "+nnz+"\n");
 
 			model.l = nnz;
 			model.SV = new svm_node[nnz][];
@@ -2566,12 +2581,18 @@ Object kernCompObj =classTemp.newInstance();
 	{
 		int nr_class = model.nr_class;
 		double[] dec_values;
+                try{
 		if(model.param.svm_type == svm_parameter.ONE_CLASS ||
 				model.param.svm_type == svm_parameter.EPSILON_SVR ||
 				model.param.svm_type == svm_parameter.NU_SVR)
 			dec_values = new double[1];
 		else
 			dec_values = new double[nr_class*(nr_class-1)/2];
+                } catch (NullPointerException ee) {
+                    System.out.println("svn_predict:null pointer");
+                    System.out.println("model:"+model);
+                    dec_values=new double[1];
+                }
 		double pred_result = svm_predict_values(model, x, dec_values);
 		return pred_result;
 	}
@@ -3026,6 +3047,110 @@ Object kernCompObj =classTemp.newInstance();
 		else 
 			svm_print_string = print_func;
 	}
-	
-	
+      class myTimerTask extends TimerTask{
+            svm_problem prob; svm_parameter param; svm_model theRes;
+            public myTimerTask(svm_problem prob,svm_parameter param){
+                this.prob=prob;this.param=param;
+            }
+            @Override
+              public void run(){
+              theRes=svm_train(prob,param);
+            }
+            
+        }
+   
+      
+      
+          ExecutorService executor =Executors.newFixedThreadPool(1);
+         public static myTimerTask task;    
+public svm_model svm_train(svm_problem prob, svm_parameter param,int seconds){
+    svm_model theRes=null;
+
+ //       Timer timer = new Timer();
+         myCallable limitedTrain = new myCallable(prob,param);
+ Future<svm_model> future=executor.submit(new jobManager(seconds,TimeUnit.SECONDS,limitedTrain));
+
+//FutureTask<svm_model> limitedTask= new FutureTask<>(limitedTrain);
+
+//Future<svm_model> future=executor.submit(limitedTrain);
+
+   try {
+       theRes=future.get(seconds,TimeUnit.SECONDS);
+ //     executor.awaitTermination(60, TimeUnit.SECONDS);
+   } catch(InterruptedException | ExecutionException |TimeoutException ee) {
+// System.out.println("libsvm.svm_train:timeout after "+seconds+ " seconds");      
+   }
+//        try {
+//           svm_model theFutureRes = future.get(seconds,TimeUnit.SECONDS);
+//                            if(future.isDone()){theRes=theFutureRes;} 
+//        } catch (OutOfMemoryError ee) {
+//                    String paramString="OutOfMemoryErrorCatch:{"+Double.toString(param.C)+","+Double.toString(param.eps)+","+
+//                    Double.toString(param.gamma)+","+Double.toString(param.coef0)+","+Double.toString(param.degree)+"}";
+//            Logger.getLogger(svm.class.getName()).log(Level.SEVERE, paramString/*,ex*/);   
+//            
+//        }  catch (InterruptedException ee) {
+//            String paramString="InterruptedException:{"+Double.toString(param.C)+","+Double.toString(param.eps)+","+
+//                    Double.toString(param.gamma)+","+Double.toString(param.coef0)+","+Double.toString(param.degree)+"}";
+//            Logger.getLogger(svm.class.getName()).log(Level.SEVERE, paramString/*,ex*/);
+//       future.cancel(true);
+//        } catch (ExecutionException exx) {
+//            String paramString="ExecutionException:{"+Double.toString(param.C)+","+Double.toString(param.eps)+","+
+//                    Double.toString(param.gamma)+","+Double.toString(param.coef0)+","+Double.toString(param.degree)+"}";
+//            Logger.getLogger(svm.class.getName()).log(Level.SEVERE, paramString/*,ex*/);
+//       future.cancel(true);
+//            
+//        } catch (TimeoutException exx) {
+//            String paramString="TimeoutException:{"+Double.toString(param.C)+","+Double.toString(param.eps)+","+
+//                    Double.toString(param.gamma)+","+Double.toString(param.coef0)+","+Double.toString(param.degree)+"}";
+//            Logger.getLogger(svm.class.getName()).log(Level.SEVERE, paramString/*,ex*/);
+//       future.cancel(true);
+//            
+    return(theRes);    }
+
+
+            
+ //           task = new myTimerTask(prob,param);
+ //       System.out.println("timer.run begin");
+  //      timer.schedule(task,0,1000*seconds);
+  //      try{
+  //          Thread.sleep(1000*seconds);
+   //     } catch(InterruptedException ee) {
+  //          ee.printStackTrace();
+  //       }
+ //       timer.cancel();
+//        System.out.println("Time's up!");
+//	return(task.theRes);
+
 }
+
+
+
+
+// {
+     
+
+        
+/*
+           @Override
+                public void run(){
+                    System.out.println("timer.run begin");
+                
+                KernelLink link = StdLink.getLink();
+                          if (link != null) {
+                link.beginManual();
+                try {
+                    link.putSymbol("$Failed");
+                } catch (MathLinkException e) {}
+            }
+                          
+                          System.out.println("timer.run end");          
+        }},1000,1000);
+       System.out.println("calling real svm_train");
+            return(svm_train(prob,param));
+public static RemindTask extends TimerTask{
+    public void run(){
+        System.out.println("Time's up!");
+        timer.cancel();
+    }
+        }*/	
+

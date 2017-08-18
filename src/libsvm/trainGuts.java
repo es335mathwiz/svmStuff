@@ -13,7 +13,17 @@ public class trainGuts {
     private String error_msg;
     private int cross_validation;
     private int nr_fold;
-
+    public double[][]xValidation;
+    public double[]yValidation;
+public trainGuts copy(){
+    trainGuts theCopy = new trainGuts();
+    theCopy.param=param.copy();
+    theCopy.prob=prob.copy();
+    if(model!=null) {
+    theCopy.model=model.copy();
+            };
+        return(theCopy);
+}
     private static double atof(String s) {
         double d = Double.valueOf(s).doubleValue();
         if (Double.isNaN(d) || Double.isInfinite(d)) {
@@ -72,6 +82,18 @@ param.coef0=0;
         postProbProc();
     }
 
+public void mma_read_problemLinear(double[][] xVals, double[] yVals) throws IOException {
+
+        setDefaults();
+param.svm_type=svm_parameter.EPSILON_SVR;
+
+param.kernel_type=0;//0linear, 1 poly, 2 rbf,3 sigmoid, 4 precomputed
+param.coef0=0;
+        prob = mmaReadProb(xVals,yVals);
+
+        postProbProc();
+    }
+
 public void mma_read_problemPoly(double[][] xVals, double[] yVals,double [] CEps) throws IOException {
 
         setDefaults();
@@ -110,7 +132,7 @@ param.gamma=CEps[2];
         postProbProc();
     }
 
-    private void postProbProc() {
+    public void postProbProc() {
         int max_index = prob.findMaxIndex();
         if (param.gamma == 0 && max_index > 0) {
             param.gamma = 1.0 / max_index;
@@ -196,6 +218,9 @@ param.coef0=CEps[3];
         return (prob);
     }
 
+
+//abstract void doSVMR(trainGuts tg, double [] params,long maxTime);
+
     public svm_problem mmaReadProb(double[][] xVals, double[] yVals) {
         Vector<Double> vy = new Vector<Double>();
         Vector<svm_node[]> vx = new Vector<svm_node[]>();
@@ -213,5 +238,15 @@ param.coef0=CEps[3];
         prob = probDef(vx, vy);
         return (prob);
     }
-
+   public void readProbValidation(double[][] xVals, double[] yVals) {
+    xValidation=new double[xVals.length][xVals[0].length];
+    yValidation =new double[yVals.length];
+         int ii;
+     for(ii=0;ii<xVals.length;ii++){
+    System.arraycopy(xValidation[ii],0,xVals[ii],0,xVals[ii].length);}
+     for(ii=0;ii<yVals.length;ii++){
+         yValidation[ii]=yVals[ii];
+     }
+   }
+  
 }
