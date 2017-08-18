@@ -193,8 +193,8 @@ abstract class Kernel extends QMatrix {
 				return Math.tanh(gamma*dot(x[i],x[j])+coef0);
 			case svm_parameter.PRECOMPUTED:
 				return x[i][(int)(x[j][0].value)].value;
-			case svm_parameter.MYPRECOMPUTED:
-			    return myKernX[i][j];
+//			case svm_parameter.MYPRECOMPUTED:
+//			    return myKernX[i][j];
 			default:
 				return 0;	// java
 		}
@@ -2530,17 +2530,17 @@ public static double
     mysvm_predict_Expected_values(svm_model model, double[] x,
     String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException
 	{
-PRECOMPUTED classTemp = Class.forName(className);
-PRECOMPUTED kernCompObj =classTemp.newInstance();
+//PRECOMPUTED classTemp = Class.forName(className);
+//PRECOMPUTED kernCompObj =classTemp.newInstance();
 
 		int i;double sum = 0;
 		if(model.param.svm_type == svm_parameter.EPSILON_SVR ||
 		   model.param.svm_type == svm_parameter.NU_SVR)
 		{			double[] sv_coef = model.sv_coef[0];
-			double [] ExpKern =kernCompObj.testExpKern(x);
+//			double [] ExpKern =kernCompObj.testExpKern(x);
 
 			for(i=0;i<model.l;i++)
-				sum += sv_coef[i] * ExpKern[model.sv_indices[i]-1];
+//				sum += sv_coef[i] * ExpKern[model.sv_indices[i]-1];
 			sum -= model.rho[0];
 
 
@@ -2558,10 +2558,10 @@ Object kernCompObj =classTemp.newInstance();
 		if(model.param.svm_type == svm_parameter.EPSILON_SVR ||
 		   model.param.svm_type == svm_parameter.NU_SVR)
 		{			double[] sv_coef = model.sv_coef[0];
-			double [] Kern =kernCompObj.testKern(x);
+//			double [] Kern =kernCompObj.testKern(x);
 
 			for(i=0;i<model.l;i++)
-				sum += sv_coef[i] * Kern[model.sv_indices[i]-1];
+//				sum += sv_coef[i] * Kern[model.sv_indices[i]-1];
 			sum -= model.rho[0];
 
 
