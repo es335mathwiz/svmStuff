@@ -1751,7 +1751,7 @@ public class svm {
 				}
 			}
 		}
-		if (iter>=max_iter)
+	//	if (iter>=max_iter)
 			//svm.info("Exceeds max_iter in multiclass_prob\n");
 	}
 
@@ -2014,7 +2014,7 @@ model.maxIndex=prob.findMaxIndex();
 			int[] start = tmp_start[0];
 			int[] count = tmp_count[0];
  			
-			if(nr_class == 1) 
+			//if(nr_class == 1) 
 				//svm.info("WARNING: training data in only one class. See README for details.\n");
 			
 			svm_node[][] x = new svm_node[l][];
