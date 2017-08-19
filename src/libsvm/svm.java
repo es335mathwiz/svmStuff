@@ -393,7 +393,7 @@ class Solver {
 				nr_free++;
 
 		if(2*nr_free < active_size)
-			svm.info("\nWARNING: using -h 0 may be faster\n");
+			//svm.info("\nWARNING: using -h 0 may be faster\n");
 
 		if (nr_free*l > 2*active_size*(l-active_size))
 		{
@@ -486,7 +486,7 @@ class Solver {
 			{
 				counter = Math.min(l,1000);
 				if(shrinking!=0) do_shrinking();
-				svm.info(".");
+//				svm.info(".");
 			}
 
 			if(select_working_set(working_set)!=0)
@@ -495,7 +495,7 @@ class Solver {
 				reconstruct_gradient();
 				// reset active set size and check
 				active_size = l;
-				svm.info("*");
+				//svm.info("*");
 				if(select_working_set(working_set)!=0)
 					break;
 				else
@@ -655,7 +655,7 @@ class Solver {
 				// reconstruct the whole gradient to calculate objective value
 				reconstruct_gradient();
 				active_size = l;
-				svm.info("*");
+				//svm.info("*");
 			}
 			System.err.print("\nWARNING: reaching max number of iterations\n");
 		}
@@ -683,7 +683,7 @@ class Solver {
 		si.upper_bound_p = Cp;
 		si.upper_bound_n = Cn;
 
-		svm.info("\noptimization finished, #iter = "+iter+"\n");
+		//svm.info("\noptimization finished, #iter = "+iter+"\n");
 	}
 
 	// return 1 if already optimal, return 0 otherwise
@@ -1355,7 +1355,7 @@ public class svm {
 			sum_alpha += alpha[i];
 
 		if (Cp==Cn)
-			svm.info("nu = "+sum_alpha/(Cp*prob.l)+"\n");
+			//svm.info("nu = "+sum_alpha/(Cp*prob.l)+"\n");
 
 		for(i=0;i<l;i++)
 			alpha[i] *= y[i];
@@ -1401,7 +1401,7 @@ public class svm {
 			alpha, 1.0, 1.0, param.eps, si, param.shrinking);
 		double r = si.r;
 
-		svm.info("C = "+1/r+"\n");
+		//svm.info("C = "+1/r+"\n");
 
 		for(i=0;i<l;i++)
 			alpha[i] *= y[i]/r;
@@ -1470,7 +1470,7 @@ public class svm {
 			alpha[i] = alpha2[i] - alpha2[i+l];
 			sum_alpha += Math.abs(alpha[i]);
 		}
-		svm.info("nu = "+sum_alpha/(param.C*l)+"\n");
+		//svm.info("nu = "+sum_alpha/(param.C*l)+"\n");
 	}
 
 	private static void solve_nu_svr(svm_problem prob, svm_parameter param,
@@ -1500,7 +1500,7 @@ public class svm {
 		s.Solve(2*l, new SVR_Q(prob,param), linear_term, y,
 			alpha2, C, C, param.eps, si, param.shrinking);
 
-		svm.info("epsilon = "+(-si.r)+"\n");
+		//svm.info("epsilon = "+(-si.r)+"\n");
 		
 		for(i=0;i<l;i++)
 			alpha[i] = alpha2[i] - alpha2[i+l];
@@ -1540,7 +1540,7 @@ public class svm {
 				break;
 		}
 
-		svm.info("obj = "+si.obj+", rho = "+si.rho+"\n");
+		//svm.info("obj = "+si.obj+", rho = "+si.rho+"\n");
 
 		// output SVs
 
@@ -1564,7 +1564,7 @@ public class svm {
 			}
 		}
 
-		svm.info("nSV = "+nSV+", nBSV = "+nBSV+"\n");
+		//svm.info("nSV = "+nSV+", nBSV = "+nBSV+"\n");
 
 		decision_function f = new decision_function();
 		f.alpha = alpha;
@@ -1676,13 +1676,13 @@ public class svm {
 			
 			if (stepsize < min_step)
 			{
-				svm.info("Line search fails in two-class probability estimates\n");
+				//svm.info("Line search fails in two-class probability estimates\n");
 				break;
 			}
 		}
 		
 		if (iter>=max_iter)
-			svm.info("Reaching maximal iterations in two-class probability estimates\n");
+			//svm.info("Reaching maximal iterations in two-class probability estimates\n");
 		probAB[0]=A;probAB[1]=B;
 	}
 
@@ -1752,7 +1752,7 @@ public class svm {
 			}
 		}
 		if (iter>=max_iter)
-			svm.info("Exceeds max_iter in multiclass_prob\n");
+			//svm.info("Exceeds max_iter in multiclass_prob\n");
 	}
 
 	// Cross-validation decision values for probability estimates
@@ -1862,7 +1862,7 @@ public class svm {
 			else 
 				mae+=Math.abs(ymv[i]);
 		mae /= (prob.l-count);
-		svm.info("Prob. model for test data: target value = predicted value + z,\nz: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma="+mae+"\n");
+		//svm.info("Prob. model for test data: target value = predicted value + z,\nz: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma="+mae+"\n");
 		return mae;
 	}
 
@@ -2015,7 +2015,7 @@ model.maxIndex=prob.findMaxIndex();
 			int[] count = tmp_count[0];
  			
 			if(nr_class == 1) 
-				svm.info("WARNING: training data in only one class. See README for details.\n");
+				//svm.info("WARNING: training data in only one class. See README for details.\n");
 			
 			svm_node[][] x = new svm_node[l][];
 			int i;
@@ -2137,7 +2137,7 @@ model.maxIndex=prob.findMaxIndex();
 				nz_count[i] = nSV;
 			}
 
-//			svm.info("Total nSV = "+nnz+"\n");
+//			//svm.info("Total nSV = "+nnz+"\n");
 
 			model.l = nnz;
 			model.SV = new svm_node[nnz][];
