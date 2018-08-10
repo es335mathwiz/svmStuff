@@ -362,6 +362,7 @@ class Solver {
 		double rho;
 		double upper_bound_p;
 		double upper_bound_n;
+                boolean maxIters;
 		double r;	// for Solver_NU
 	}
 
@@ -478,7 +479,7 @@ class Solver {
 		int max_iter = Math.max(10000000, l>Integer.MAX_VALUE/100 ? Integer.MAX_VALUE : 100*l);
 		int counter = Math.min(l,1000)+1;
 		int[] working_set = new int[2];
-
+si.maxIters=false;
 		while(iter < max_iter)
 		{
 			// show progress and do shrinking
@@ -651,6 +652,7 @@ class Solver {
 		
 		if(iter >= max_iter)
 		{
+                    si.maxIters=true;
 			if(active_size < l)
 			{
 				// reconstruct the whole gradient to calculate objective value
