@@ -15,7 +15,7 @@ public class Runsvm {
  {double[] trgt = new double[20];
     System.out.println("Runsvm:");
     trainGuts svmt= new trainGuts();
-    svmt.input_file_name=System.getProperty("user.home")+"/git/manchesterCS/61011/libsvm/heart_scale";
+    svmt.input_file_name=/*System.getProperty("user.home")+*/"/msu/scratch2/m1gsa00/git/manchesterCS/61011/libsvm/heart_scale";
     svmt.read_problem();
     svm svmDoer = new svm();
     svm_model mod = svmDoer.svm_train(svmt.prob,svmt.param,19);
