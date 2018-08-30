@@ -21,7 +21,7 @@ public int maxIndex;
     public int[] label;		// label of each class (label[k])
     public int[] nSV;		// number of SVs for each class (nSV[k])
     // nSV[0] + nSV[1] + ... + nSV[k-1] = l
-    
+    public boolean maxIterations;
 public svm_model copy(){
   svm_model  theCopy =new svm_model();
   theCopy.param=param.copy();

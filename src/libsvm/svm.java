@@ -1520,10 +1520,10 @@ public class svm {
 
 	static decision_function svm_train_one(
 		svm_problem prob, svm_parameter param,
-		double Cp, double Cn)
+		double Cp, double Cn, Solver.SolutionInfo si)
 	{
 		double[] alpha = new double[prob.l];
-		Solver.SolutionInfo si = new Solver.SolutionInfo();
+
 		switch(param.svm_type)
 		{
 			case svm_parameter.C_SVC:
@@ -1977,11 +1977,11 @@ model.maxIndex=prob.findMaxIndex();
 				model.probA = new double[1];
 				model.probA[0] = svm_svr_probability(prob,param);
 			}
-
-			decision_function f = svm_train_one(prob,param,0,0);
+		Solver.SolutionInfo sinfo = new Solver.SolutionInfo();
+			decision_function f = svm_train_one(prob,param,0,0,sinfo);
 			model.rho = new double[1];
 			model.rho[0] = f.rho;
-
+model.maxIterations=sinfo.maxIters;
 			int nSV = 0;
 			int i;
 			for(i=0;i<prob.l;i++)
@@ -2085,8 +2085,8 @@ model.maxIndex=prob.findMaxIndex();
 						probA[p]=probAB[0];
 						probB[p]=probAB[1];
 					}
-
-					f[p] = svm_train_one(sub_prob,param,weighted_C[i],weighted_C[j]);
+		Solver.SolutionInfo sinfo = new Solver.SolutionInfo();
+					f[p] = svm_train_one(sub_prob,param,weighted_C[i],weighted_C[j],sinfo);
 					for(k=0;k<ci;k++)
 						if(!nonzero[si+k] && Math.abs(f[p].alpha[k]) > 0)
 							nonzero[si+k] = true;
